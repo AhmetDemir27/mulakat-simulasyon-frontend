@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { startInterview } from '@/services/apiService';
+
 interface HomePageProps {
   onInterviewStart: (sessionData: any) => void;
 }
@@ -29,7 +30,7 @@ const HomePage = ({ onInterviewStart }: HomePageProps) => {
         userId: DUMMY_USER_ID,
         technology,
         difficulty,
-        soruSayisi: 5
+        totalCountOfQuestion : 5
       });
       onInterviewStart(response.data);
     } catch (err) {
@@ -59,7 +60,8 @@ const HomePage = ({ onInterviewStart }: HomePageProps) => {
         <div className="space-y-2">
           <Label htmlFor="difficulty" className="text-slate-300">Zorluk Seviyesi</Label>
           <Select onValueChange={setDifficulty}>
-            <SelectTrigger className="w-full bg-slate-800 border-slate-600 text-white">
+            {/* DÜZELTME: id="difficulty" özelliğini buraya ekledik */}
+            <SelectTrigger id="difficulty" className="w-full bg-slate-800 border-slate-600 text-white">
               <SelectValue placeholder="Seviye seçin" />
             </SelectTrigger>
             <SelectContent className="bg-slate-800 border-slate-600 text-white">

@@ -1,26 +1,35 @@
-import { useState } from 'react';
-import { Button } from "./ui/button";
+import { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "./ui/textarea";
-import { submitAnswer } from '../services/apiService';
+import { Textarea } from "@/components/ui/textarea";
+import { submitAnswer } from '@/services/apiService'; // finishInterview'ü şimdilik kaldırdık
 
 interface InterviewPageProps {
   initialSessionData: any;
 }
 
 const InterviewPage = ({ initialSessionData }: InterviewPageProps) => {
-  const [session] = useState(initialSessionData.sessionDetails);
+  // --- DÜZELTME: initialSessionData'dan verileri güvenli bir şekilde ayıklayalım ---
+  const [session] = useState(initialSessionData?.sessionDetails);
   const [currentQuestion, setCurrentQuestion] = useState({
-    text: initialSessionData.firstQuestionText,
-    id: initialSessionData.firstQuestionId,
+    text: initialSessionData?.firstQuestionText,
+    id: initialSessionData?.firstQuestionId,
   });
+
   const [answer, setAnswer] = useState('');
   const [lastFeedback, setLastFeedback] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
 
   const handleSubmit = async () => {
+    // Güvenlik kontrolü: Session veya soru ID'si yoksa devam etme
+    if (!session?.id || !currentQuestion?.id) {
+      console.error("HATA: Session ID veya Soru ID tanımsız! İstek gönderilemiyor.");
+      alert("Kritik bir hata oluştu: Oturum bilgileri eksik. Lütfen sayfayı yenileyin.");
+      return;
+    }
     if (!answer) return;
+
     setIsLoading(true);
 
     try {
@@ -30,6 +39,7 @@ const InterviewPage = ({ initialSessionData }: InterviewPageProps) => {
       });
 
       const { answerEvaluation, nextQuestionText, nextQuestionId } = response.data;
+
       setLastFeedback(answerEvaluation);
       setAnswer('');
 
@@ -39,12 +49,26 @@ const InterviewPage = ({ initialSessionData }: InterviewPageProps) => {
         setIsFinished(true);
       }
     } catch (error) {
-      console.error("Cevap gönderilirken hata:", error);
+      console.error("Cevap gönderilirken API hatası:", error);
+      alert("Sunucuya bağlanırken bir hata oluştu. Lütfen konsolu kontrol edin.");
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Mülakat daha başlamadan bir sorun varsa
+  if (!session || !currentQuestion) {
+    return (
+        <Card className="w-full max-w-lg bg-red-900 border-red-700 text-center">
+            <CardHeader><CardTitle className="text-2xl text-white">Hata!</CardTitle></CardHeader>
+            <CardContent>
+                <p>Mülakat verileri yüklenemedi. Lütfen ana sayfaya dönüp tekrar deneyin.</p>
+            </CardContent>
+        </Card>
+    );
+  }
+
+  // --- Geri kalan render kısmı aynı ---
   if (isFinished) {
     return (
       <Card className="w-full max-w-3xl bg-slate-900 border-slate-700 text-center">
@@ -96,7 +120,7 @@ const InterviewPage = ({ initialSessionData }: InterviewPageProps) => {
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAnswer(e.target.value)}
             placeholder="Cevabınızı buraya yazın..."
             rows={10}
-            className="bg-slate-800 border-slate-600 text-white"
+            className="bg-slate-800 border-slate-600 text-white focus-visible:ring-indigo-500"
           />
         </CardContent>
       </Card>
@@ -109,3 +133,4 @@ const InterviewPage = ({ initialSessionData }: InterviewPageProps) => {
 };
 
 export default InterviewPage;
+

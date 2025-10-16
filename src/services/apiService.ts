@@ -19,3 +19,11 @@ export const startInterview = (data: { userId: number; technology: string; diffi
 export const submitAnswer = (sessionId: number, data: { questionId: number; answerText: string; }) => {
   return apiClient.post(`/mulakatlar/${sessionId}/answer`, data);
 };
+
+// YENİ EKLENEN FONKSİYON: Mülakatı bitirme isteği
+export const finishInterview = (sessionId: number) => {
+  // Backend'deki endpoint'in sonundaki slash'e dikkat edelim.
+  // Controller'da "/{sessionId}/finish/" şeklinde olduğu için buraya da ekliyoruz.
+  return apiClient.post(`/mulakatlar/${sessionId}/finish/`);
+};
+
