@@ -15,7 +15,7 @@ const HomePage = ({ onInterviewStart }: HomePageProps) => {
   const [difficulty, setDifficulty] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const DUMMY_USER_ID = 152; 
+
 
   const handleStart = async () => {
     if (!technology || !difficulty) {
@@ -27,7 +27,6 @@ const HomePage = ({ onInterviewStart }: HomePageProps) => {
 
     try {
       const response = await startInterview({
-        userId: DUMMY_USER_ID,
         technology,
         difficulty,
         totalCountOfQuestion : 5

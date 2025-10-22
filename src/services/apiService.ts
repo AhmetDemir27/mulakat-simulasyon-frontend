@@ -9,9 +9,29 @@ const apiClient = axios.create({
     'Content-Type': 'application/json',
   },
 });
+apiClient.interceptors.request.use(
+  (config) => {
+    // Tarayıcının hafızasından 'accessToken' adıyla kaydettiğimiz JWT'yi al
+    const token = localStorage.getItem('accessToken');
+    
+    // Eğer token varsa...
+    if (token) {
+      // İsteğin başlıklarına (headers) 'Authorization' başlığını ekle.
+      // Değeri "Bearer [token]" formatında olmalıdır. Bu bir standarttır.
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    
+    // Değiştirilmiş isteği yoluna devam etmesi için geri döndür.
+    return config;
+  },
+  (error) => {
+    // İstek yapılandırılırken bir hata olursa, hatayı reddet.
+    return Promise.reject(error);
+  }
+);
 
 // Mülakat başlatma isteği
-export const startInterview = (data: { userId: number; technology: string; difficulty: string; totalCountOfQuestion: number; }) => {
+export const startInterview = (data: { technology: string; difficulty: string; totalCountOfQuestion: number; }) => {
   return apiClient.post('/mulakatlar', data);
 };
 

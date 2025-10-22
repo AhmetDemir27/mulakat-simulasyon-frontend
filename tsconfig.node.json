@@ -13,8 +13,8 @@
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
-    "noEmit": true,
     
+    /* noEmit: true satırı buradan kaldırıldı! */
 
     /* Linting */
     "strict": true,
@@ -26,3 +26,4 @@
   },
   "include": ["vite.config.ts"]
 }
+
